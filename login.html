@@ -199,10 +199,6 @@
 </main>
 
 <script>
-    const ADMIN = {
-    username: "admin",
-    password: "admin123"
-};    
     const users = [
         { username: "brawlers", password: "brawlers" },
         { username: "teamcinco", password: "teamcinco" },
@@ -251,30 +247,16 @@
         const passVal = document.getElementById('password').value;
 
         // Find user (case insensitive username check)
-        // Admin login
-if (userVal === ADMIN.username && passVal === ADMIN.password) {
-    localStorage.setItem('isLoggedIn', 'true');
-    localStorage.setItem('currentUser', 'Admin');
-    localStorage.setItem('role', 'admin');
-    window.location.href = 'index.html';
-    return;
-}
+        const foundUser = users.find(u => u.username.toLowerCase() === userVal && u.password === passVal);
 
-// Participant login
-const foundUser = users.find(
-    u => u.username.toLowerCase() === userVal && u.password === passVal
-);
-
-if (foundUser) {
-    localStorage.setItem('isLoggedIn', 'true');
-    localStorage.setItem('currentUser', foundUser.username);
-    localStorage.setItem('role', 'user');
-    window.location.href = 'index.html';
-} else {
-    errorDisplay.style.display = 'block';
-    document.getElementById('password').value = '';
-}
-
+        if (foundUser) {
+            localStorage.setItem('isLoggedIn', 'true');
+            localStorage.setItem('currentUser', foundUser.username);
+            window.location.href = 'index.html';
+        } else {
+            errorDisplay.style.display = 'block';
+            document.getElementById('password').value = ''; 
+        }
     });
 
     // Auto-redirect if session exists
@@ -288,4 +270,3 @@ if (foundUser) {
 </body>
 
 </html>
-
