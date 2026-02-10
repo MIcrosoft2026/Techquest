@@ -493,27 +493,30 @@ CSS
         </div>
     </div>
 </main>
-
 <script>
-    // Security & Access
-    if (localStorage.getItem('isLoggedIn') !== 'true') window.location.href = 'login.html';
-    
-    const username = localStorage.getItem('currentUser') || "Participant";
-    document.getElementById('username-display').innerText = username;
+/* ---------------- SECURITY ---------------- */
+if (localStorage.getItem('isLoggedIn') !== 'true') {
+    window.location.href = 'login.html';
+}
 
-    function logout() {
-        if(confirm("Logout?")) { localStorage.clear(); window.location.href = 'login.html'; }
+const username = localStorage.getItem('currentUser') || "Participant";
+document.getElementById('username-display').innerText = username;
+
+function logout() {
+    if (confirm("Logout?")) {
+        localStorage.clear();
+        window.location.href = 'login.html';
     }
+}
 
-   <script>
+/* ---------------- ROLE & LOCK LOGIC ---------------- */
 const role = localStorage.getItem('role');
 
-// Show admin controls only to admin
+// Show admin controls only for admin
 if (role === 'admin') {
     document.getElementById('admin-controls').style.display = 'block';
 }
 
-// Lock & Unlock functions
 function unlockQuestions() {
     localStorage.setItem('questionsUnlocked', 'true');
     updateView();
@@ -524,7 +527,6 @@ function lockQuestions() {
     updateView();
 }
 
-// Control what user sees
 function updateView() {
     const unlocked = localStorage.getItem('questionsUnlocked') === 'true';
 
@@ -537,57 +539,60 @@ function updateView() {
     }
 }
 
-// Run on page load
+// Run once on load
 updateView();
-</script>
 
+/* ---------------- FORM SUBMISSION ---------------- */
+const debugForm = document.getElementById('debug-form');
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycby7D_shsAYIKCOCoTMlDJaugrBTlBZFvYPhccW0gt6xOQKFskwlF5zizMexo6BOIYa5/exec";
 
-    // Consolidated Submit Logic
-    const debugForm = document.getElementById('debug-form');
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycby7D_shsAYIKCOCoTMlDJaugrBTlBZFvYPhccW0gt6xOQKFskwlF5zizMexo6BOIYa5/exec";
+debugForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
 
-    debugForm.addEventListener('submit', async (e) => {
+    const btn = document.getElementById('submit-btn');
+    btn.disabled = true;
+    btn.innerText = "Submitting...";
+
+    const payload = {
+        college: "Ramco Institute of Technology",
+        event: "TECHQUEST",
+        team: username,
+        timestamp: new Date().toLocaleString()
+    };
+
+    for (let i = 1; i <= 15; i++) {
+        payload[`q${i}`] = document.getElementById(`q${i}`).value;
+    }
+
+    try {
+        await fetch(SCRIPT_URL, {
+            method: "POST",
+            mode: "no-cors",
+            body: JSON.stringify(payload)
+        });
+
+        debugForm.style.display = "none";
+        document.getElementById("success-msg").style.display = "block";
+    } catch (err) {
+        alert("Submission failed. Check internet.");
+        btn.disabled = false;
+        btn.innerText = "Submit Answers";
+    }
+});
+
+/* ---------------- DISABLE PASTE ---------------- */
+document.querySelectorAll('textarea').forEach(el => {
+    el.onpaste = e => {
+        alert("No pasting allowed!");
         e.preventDefault();
-        const btn = document.getElementById('submit-btn');
-        btn.disabled = true;
-        btn.innerText = "Submitting...";
-
-        // Collect all 15 answers
-        const payload = {
-            college: "Ramco Institute of Technology",
-            event: "TECHQUEST",
-            team: username,
-            timestamp: new Date().toLocaleString()
-        };
-
-        // Add each question to the payload dynamically
-        for (let i = 1; i <= 15; i++) {
-            payload[`q${i}`] = document.getElementById(`q${i}`).value;
-        }
-
-        try {
-            await fetch(SCRIPT_URL, {
-                method: "POST",
-                mode: "no-cors",
-                body: JSON.stringify(payload)
-            });
-            debugForm.style.display = "none";
-            document.getElementById("success-msg").style.display = "block";
-        } catch (err) {
-            alert("Submission failed. Check internet.");
-            btn.disabled = false;
-            btn.innerText = "Submit Answers";
-        }
-    });
-
-    // Copy-Paste Block
-    document.querySelectorAll('textarea').forEach(el => {
-        el.onpaste = (e) => { alert("No pasting!"); e.preventDefault(); };
-    });
+    };
+});
 </script>
+
 </body>
 
 </html>
+
 
 
 
