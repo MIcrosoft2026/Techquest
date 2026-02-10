@@ -133,6 +133,12 @@
 
 <main>
     <div class="container">
+        <div id="admin-controls" class="card" style="display:none; text-align:center;">
+    <h3>Admin Controls</h3>
+    <button onclick="unlockQuestions()" class="btn-submit">🔓 Unlock Questions</button>
+    <button onclick="lockQuestions()" class="btn-submit" style="background:#a4262c;">🔒 Lock Questions</button>
+</div>
+
         <div id="lock-overlay" class="card">
             <h2>Challenge Locked</h2>
             <p>Wait for the administrator to unlock the module.</p>
@@ -499,12 +505,42 @@ CSS
         if(confirm("Logout?")) { localStorage.clear(); window.location.href = 'login.html'; }
     }
 
-    // Unlock logic
-    const isUnlocked = true; 
-    if (isUnlocked) {
+   <script>
+const role = localStorage.getItem('role');
+
+// Show admin controls only to admin
+if (role === 'admin') {
+    document.getElementById('admin-controls').style.display = 'block';
+}
+
+// Lock & Unlock functions
+function unlockQuestions() {
+    localStorage.setItem('questionsUnlocked', 'true');
+    updateView();
+}
+
+function lockQuestions() {
+    localStorage.setItem('questionsUnlocked', 'false');
+    updateView();
+}
+
+// Control what user sees
+function updateView() {
+    const unlocked = localStorage.getItem('questionsUnlocked') === 'true';
+
+    if (unlocked || role === 'admin') {
         document.getElementById('lock-overlay').style.display = 'none';
         document.getElementById('competition-view').style.display = 'block';
+    } else {
+        document.getElementById('lock-overlay').style.display = 'block';
+        document.getElementById('competition-view').style.display = 'none';
     }
+}
+
+// Run on page load
+updateView();
+</script>
+
 
     // Consolidated Submit Logic
     const debugForm = document.getElementById('debug-form');
@@ -552,6 +588,7 @@ CSS
 </body>
 
 </html>
+
 
 
 
