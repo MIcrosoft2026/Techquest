@@ -133,12 +133,6 @@
 
 <main>
     <div class="container">
-        <div id="admin-controls" class="card" style="display:none; text-align:center;">
-    <h3>Admin Controls</h3>
-    <button onclick="unlockQuestions()" class="btn-submit">🔓 Unlock Questions</button>
-    <button onclick="lockQuestions()" class="btn-submit" style="background:#a4262c;">🔒 Lock Questions</button>
-</div>
-
         <div id="lock-overlay" class="card">
             <h2>Challenge Locked</h2>
             <p>Wait for the administrator to unlock the module.</p>
@@ -493,108 +487,71 @@ CSS
         </div>
     </div>
 </main>
+
 <script>
-/* ---------------- SECURITY ---------------- */
-if (localStorage.getItem('isLoggedIn') !== 'true') {
-    window.location.href = 'login.html';
-}
+    // Security & Access
+    if (localStorage.getItem('isLoggedIn') !== 'true') window.location.href = 'login.html';
+    
+    const username = localStorage.getItem('currentUser') || "Participant";
+    document.getElementById('username-display').innerText = username;
 
-const username = localStorage.getItem('currentUser') || "Participant";
-document.getElementById('username-display').innerText = username;
-
-function logout() {
-    if (confirm("Logout?")) {
-        localStorage.clear();
-        window.location.href = 'login.html';
+    function logout() {
+        if(confirm("Logout?")) { localStorage.clear(); window.location.href = 'login.html'; }
     }
-}
 
-/* ---------------- ROLE & LOCK LOGIC ---------------- */
-const role = localStorage.getItem('role');
-
-// Show admin controls only for admin
-if (role === 'admin') {
-    document.getElementById('admin-controls').style.display = 'block';
-}
-
-function unlockQuestions() {
-    localStorage.setItem('questionsUnlocked', 'true');
-    updateView();
-}
-
-function lockQuestions() {
-    localStorage.setItem('questionsUnlocked', 'false');
-    updateView();
-}
-
-function updateView() {
-    const unlocked = localStorage.getItem('questionsUnlocked') === 'true';
-
-    if (unlocked || role === 'admin') {
+    // Unlock logic
+    const isUnlocked = true; 
+    if (isUnlocked) {
         document.getElementById('lock-overlay').style.display = 'none';
         document.getElementById('competition-view').style.display = 'block';
-    } else {
-        document.getElementById('lock-overlay').style.display = 'block';
-        document.getElementById('competition-view').style.display = 'none';
-    }
-}
-
-// Run once on load
-updateView();
-
-/* ---------------- FORM SUBMISSION ---------------- */
-const debugForm = document.getElementById('debug-form');
-const SCRIPT_URL = "https://script.google.com/macros/s/AKfycby7D_shsAYIKCOCoTMlDJaugrBTlBZFvYPhccW0gt6xOQKFskwlF5zizMexo6BOIYa5/exec";
-
-debugForm.addEventListener('submit', async (e) => {
-    e.preventDefault();
-
-    const btn = document.getElementById('submit-btn');
-    btn.disabled = true;
-    btn.innerText = "Submitting...";
-
-    const payload = {
-        college: "Ramco Institute of Technology",
-        event: "TECHQUEST",
-        team: username,
-        timestamp: new Date().toLocaleString()
-    };
-
-    for (let i = 1; i <= 15; i++) {
-        payload[`q${i}`] = document.getElementById(`q${i}`).value;
     }
 
-    try {
-        await fetch(SCRIPT_URL, {
-            method: "POST",
-            mode: "no-cors",
-            body: JSON.stringify(payload)
-        });
+    // Consolidated Submit Logic
+    const debugForm = document.getElementById('debug-form');
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycby7D_shsAYIKCOCoTMlDJaugrBTlBZFvYPhccW0gt6xOQKFskwlF5zizMexo6BOIYa5/exec";
 
-        debugForm.style.display = "none";
-        document.getElementById("success-msg").style.display = "block";
-    } catch (err) {
-        alert("Submission failed. Check internet.");
-        btn.disabled = false;
-        btn.innerText = "Submit Answers";
-    }
-});
-
-/* ---------------- DISABLE PASTE ---------------- */
-document.querySelectorAll('textarea').forEach(el => {
-    el.onpaste = e => {
-        alert("No pasting allowed!");
+    debugForm.addEventListener('submit', async (e) => {
         e.preventDefault();
-    };
-});
-</script>
+        const btn = document.getElementById('submit-btn');
+        btn.disabled = true;
+        btn.innerText = "Submitting...";
 
+        // Collect all 15 answers
+        const payload = {
+            college: "Ramco Institute of Technology",
+            event: "TECHQUEST",
+            team: username,
+            timestamp: new Date().toLocaleString()
+        };
+
+        // Add each question to the payload dynamically
+        for (let i = 1; i <= 15; i++) {
+            payload[`q${i}`] = document.getElementById(`q${i}`).value;
+        }
+
+        try {
+            await fetch(SCRIPT_URL, {
+                method: "POST",
+                mode: "no-cors",
+                body: JSON.stringify(payload)
+            });
+            debugForm.style.display = "none";
+            document.getElementById("success-msg").style.display = "block";
+        } catch (err) {
+            alert("Submission failed. Check internet.");
+            btn.disabled = false;
+            btn.innerText = "Submit Answers";
+        }
+    });
+
+    // Copy-Paste Block
+    document.querySelectorAll('textarea').forEach(el => {
+        el.onpaste = (e) => { alert("No pasting!"); e.preventDefault(); };
+    });
+</script>
 </body>
 
 </html>
-
-
-
 
 
 
