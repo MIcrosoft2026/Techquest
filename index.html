@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TECHQUEST | Debugging Challenge</title>
+    <style>
+        :root {
+            --ms-blue: #0078d4;
+            --ms-dark-blue: #005a9e;
+            --bg-gray: #f3f2f1;
+            --text-main: #323130;
+            --white: #ffffff;
+            --border: #edebe9;
+            --code-bg: #2b2b2b;
+            --error-red: #a4262c;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-gray);
+            color: var(--text-main);
+            overflow-x: hidden;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+
+        textarea {
+            -webkit-user-select: text;
+            -moz-user-select: text;
+            -ms-user-select: text;
+            user-select: text;
+        }
+
+        header {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: var(--white);
+            border-bottom: 1px solid var(--border);
+            z-index: 1000;
+            padding: 10px 40px;
+            display: grid;
+            grid-template-columns: auto 1fr auto;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .logo-container { display: flex; align-items: center; gap: 12px; }
+        .logo-box {
+            width: 50px; height: 50px;
+            background-color: #f3f2f1;
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            overflow: hidden; border: 1px solid #ddd;
+        }
+        .logo-box img { max-width: 80%; max-height: 80%; object-fit: contain; }
+
+        .header-center h1 { font-size: 0.8rem; color: #605e5c; text-transform: uppercase; }
+        .header-center h2 { font-size: 1.1rem; color: var(--ms-blue); }
+        .header-center p { font-size: 0.75rem; font-weight: 600; }
+
+        .user-profile { text-align: right; font-size: 0.9rem; }
+        .username { font-weight: 600; color: var(--ms-blue); display: block; }
+        .logout-link { color: var(--error-red); text-decoration: none; font-size: 0.8rem; cursor: pointer; }
+
+        main { margin-top: 100px; padding: 20px; display: flex; justify-content: center; }
+        .container { width: 100%; max-width: 900px; }
+        .card {
+            background: var(--white);
+            padding: 30px;
+            border-radius: 2px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+
+        #lock-overlay { text-align: center; padding: 50px 0; }
+        #competition-view { display: none; }
+
+        .section-title { border-left: 4px solid var(--ms-blue); padding-left: 15px; margin-bottom: 20px; font-size: 1.3rem; }
+
+        .code-block {
+            background: var(--code-bg);
+            color: #dcdcdc;
+            padding: 20px;
+            border-radius: 4px;
+            font-family: 'Consolas', monospace;
+            margin-bottom: 15px;
+            overflow-x: auto;
+            white-space: pre;
+            pointer-events: none; 
+        }
+
+        textarea { width: 100%; height: 120px; padding: 15px; border: 1px solid #8a8886; margin-top: 10px; resize: none; }
+        textarea:focus { outline: 2px solid var(--ms-blue); border-color: transparent; }
+
+        .btn-submit {
+            background-color: var(--ms-blue);
+            color: white;
+            padding: 15px 40px;
+            border: none;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: block;
+            margin: 20px auto;
+        }
+
+        #success-msg { display: none; text-align: center; color: #107c10; background: #dff6dd; padding: 20px; border: 1px solid #107c10; }
+    </style>
+</head>
+<body oncontextmenu="return false;">
+
+<header>
+    <div class="logo-container">
+        <div class="logo-box"><img src="logo.png" alt="College Logo"></div>
+        <div class="logo-box"><img src="community-logo.png" alt="Community Logo"></div>
+    </div>
+    <div class="header-center">
+        <h1>RAMCO INSTITUTE OF TECHNOLOGY</h1>
+        <h2>TECHQUEST – The Ultimate Tech Challenge</h2>
+        <p>Organized by Microsoft Student Chapter</p>
+    </div>
+    <div class="user-profile">
+        <span class="username" id="username-display">User</span>
+        <span class="logout-link" onclick="logout()">Logout</span>
+    </div>
+</header>
+
+<main>
+    <div class="container">
+        <div id="lock-overlay" class="card">
+            <h2>Challenge Locked</h2>
+            <p>Wait for the administrator to unlock the module.</p>
+        </div>
+
+        <div id="competition-view">
+            <form id="debug-form">
+                <div class="card">
+    <h3 class="section-title">Question 1: Binary Search Debugging</h3>
+    <p><strong>Description:</strong> The following Python function attempts to perform a binary search but may enter an infinite loop or fail to find an existing element. Identify the error and provide the fix.</p>
+
+    <div class="code-block">
+def binary_search(arr, target):
+    low = 0
+    high = len(arr) - 1
+
+    while low < high:
+        mid = (low + high) // 2
+        if arr[mid] == target:
+            return mid
+        elif arr[mid] < target:
+            low = mid
+        else:
+            high = mid
+    return -1
+    </div>
+
+    <label>Your Analysis & Correction:</label>
+    <textarea id="q1" placeholder="Describe the error and provide the corrected code logic here..." required></textarea>
+</div>
+
+
+<div class="card">
+  <h3 class="section-title">Question 2: Code Debugging</h3>
+
+  <p>
+    <strong>Description:</strong> The following Python function is intended to
+    calculate the Fibonacci number for a given value <code>n</code>. However,
+    the logic contains an error that produces incorrect results. Identify the
+    mistake and provide the corrected code.
+  </p>
+
+  <div class="code-block">
+def fibonacci(n):
+    if n == 0:
+        return 0
+    if n == 1:
+        return 1
+
+    return fibonacci(n - 1) + fibonacci(n - 3)
+  </div>
+
+  <textarea id="q2" placeholder="Explain the error and provide the corrected code..." required></textarea>
+</div>
+
+
+
+<div class="card">
+    <h3 class="section-title">Question 3: Factorial Debugging</h3>
+    <p><strong>Description:</strong> The factorial function below fails for an important base case. Identify the error and provide the fix.</p>
+
+    <div class="code-block">
+def factorial(n):
+    if n == 0:
+        return 0
+    return n * factorial(n-1)
+    </div>
+
+    <label>Your Analysis & Correction:</label>
+    <textarea id="q3" placeholder="Describe the error and provide the corrected code logic here..." required></textarea>
+</div>
+
+<div class="card">
+  <h3 class="section-title">Question 4: Code Debugging</h3>
+
+  <p>
+    <strong>Description:</strong> The following Python function is intended to
+    check whether a given number is a palindrome. However, the function contains
+    logical errors and does not return the correct result. Identify the mistake
+    and provide the corrected code.
+  </p>
+
+  <div class="code-block">
+def is_palindrome(num):
+    rev = 0
+    temp = num
+
+    while temp > 0:
+        rev = rev * 10 + temp % 10
+        temp = temp // 10
+
+    if rev == temp:
+        return True
+    return False
+  </div>
+
+  <textarea id="q4" placeholder="Explain the error and provide the corrected code..." required></textarea>
+</div>
+
+
+
+<div class="card">
+  <h3 class="section-title">Question 5: Prime</h3>
+
+  <p><strong>Description:</strong> The following Python function is intended to check whether a number <code>n</code> is prime. However, it gives incorrect results for certain values. Identify the error and provide the fix.</p>
+
+  <div class="code-block">
+def is_prime(n):
+    if n < 2:
+        return True
+
+    for i in range(2, n):
+        if n % i == 0:
+            return False
+
+    return True
+  </div>
+
+  <textarea id="q5" placeholder="Explain the error and correction..." required></textarea>
+</div>
+
+
+
+<div class="card">
+    <h3 class="section-title">Question 6: Count Occurrences Debugging</h3>
+    <p><strong>Description:</strong> The following Python function is intended to count how many times a value <code>x</code> appears in an array. However, it does not return the correct count. Identify the error and provide the fix.</p>
+
+    <div class="code-block">
+def count_occurrences(arr, x):
+    count = 0
+    for i in range(len(arr)):
+        if arr[i] == x:
+            count = 1
+    return count
+    </div>
+
+    <label>Your Analysis & Correction:</label>
+    <textarea id="q6" placeholder="Describe the error and provide the corrected code logic here..." required></textarea>
+</div>
+
+
+<div class="card">
+  <h3 class="section-title">Question 7: Check Sorted</h3>
+
+  <p><strong>Description:</strong> The following Python function is intended to check whether an array <code>arr</code> is sorted in ascending order. However, it causes an error while running. Identify the error and provide the fix.</p>
+
+  <div class="code-block">
+def is_sorted(arr):
+    for i in range(len(arr)):
+        if arr[i] > arr[i+1]:
+            return False
+    return True
+  </div>
+
+  <textarea id="q7" placeholder="Explain the error and correction..." required></textarea>
+</div>
+
+<div class="card">
+  <h3 class="section-title">Question 8: Code Debugging</h3>
+
+  <p>
+    <strong>Description:</strong> The following Python function is intended to
+    calculate the sum of the first <code>n</code> natural numbers. However, the
+    function contains a logical error and does not produce the correct result.
+    Identify the error and provide the corrected code.
+  </p>
+
+  <div class="code-block">
+def sum_n(n):
+    total = 0
+    for i in range(1, n):
+        total += i
+    return total
+  </div>
+
+  <textarea id="q8" placeholder="Explain the error and provide the corrected code..." required></textarea>
+</div>
+
+
+
+<div class="card">
+  <h3 class="section-title">Question 9: Largest Element</h3>
+
+  <p><strong>Description:</strong> The following Python function is intended to find the largest element in an array <code>arr</code>. However, it returns the wrong result. Identify the error and provide the fix.</p>
+
+  <div class="code-block">
+def largest(arr):
+    max_val = arr[0]
+    for num in arr:
+        if num < max_val:
+            max_val = num
+    return max_val
+  </div>
+
+  <textarea id="q9" placeholder="Explain the error and correction..." required></textarea>
+</div>
+
+
+<div class="card">
+  <h3 class="section-title">Question 10: Code Debugging</h3>
+
+  <p>
+    <strong>Description:</strong> The following Python function is intended to
+    check whether a given number is even. However, the logic is incorrect and
+    causes the function to return the wrong result. Identify the error and
+    provide the corrected code.
+  </p>
+
+  <div class="code-block">
+def is_even(n):
+    if n % 2 == 1:
+        return True
+    else:
+        return False
+  </div>
+
+  <textarea id="q10" placeholder="Explain the error and provide the corrected code..." required></textarea>
+</div>
+
+
+
+<div class="card">
+  <h3 class="section-title">Question 11: HTML & CSS Debugging</h3>
+
+  <p>
+    <strong>Description:</strong> The following HTML and CSS code is intended to
+    change the color of a paragraph text to blue. However, the style is not
+    applied correctly. Identify the error and provide the corrected code.
+  </p>
+
+  <div class="code-block">
+HTML
+&lt;p id="text"&gt;Hello World&lt;/p&gt;
+
+CSS
+.text {
+    color: blue;
+}
+  </div>
+
+  <textarea id="q11" placeholder="Explain the error and provide the corrected code..." required></textarea>
+</div>
+
+<div class="card">
+  <h3 class="section-title">Question 12: HTML & CSS Debugging</h3>
+
+  <p>
+    <strong>Description:</strong> The following HTML and CSS code is intended to
+    apply a yellow background color to a div element. However, the CSS selector
+    is incorrect and the style is not applied. Identify the error and provide
+    the corrected code.
+  </p>
+
+  <div class="code-block">
+HTML
+&lt;div class="box"&gt;Content&lt;/div&gt;
+
+CSS
+#box {
+    background-color: yellow;
+}
+  </div>
+
+  <textarea id="q12" placeholder="Explain the error and provide the corrected code..." required></textarea>
+</div>
+
+
+<div class="card">
+  <h3 class="section-title">Question 13: HTML & CSS Debugging</h3>
+
+  <p>
+    <strong>Description:</strong> The following HTML and CSS code is intended to
+    display a heading with a larger font size. However, the CSS contains an
+    error and the style is not applied correctly. Identify the mistake and
+    provide the corrected code.
+  </p>
+
+  <div class="code-block">
+HTML
+&lt;h2 class="title"&gt;Welcome&lt;/h2&gt;
+
+CSS
+.title {
+    font-size: 30;
+}
+  </div>
+
+  <textarea id="q13" placeholder="Explain the error and provide the corrected code..." required></textarea>
+</div>
+
+
+
+<div class="card">
+  <h3 class="section-title">Question 14: HTML & CSS Debugging</h3>
+
+  <p>
+    <strong>Description:</strong> The following HTML and CSS code is intended to
+    apply a border to a card element. However, the CSS property is incomplete
+    and the border is not displayed correctly. Identify the error and provide
+    the corrected code.
+  </p>
+
+  <div class="code-block">
+HTML
+&lt;div class="card"&gt;Card&lt;/div&gt;
+
+CSS
+.card {
+    border: 5;
+}
+  </div>
+
+  <textarea id="q14" placeholder="Explain the error and provide the corrected code..." required></textarea>
+</div>
+
+<div class="card">
+  <h3 class="section-title">Question 15: Text Alignment Not Working</h3>
+
+  <p>
+    <strong>Description:</strong>
+    The following HTML and CSS code is intended to center-align the text
+    "Hello". However, the text does not move to the center. Identify the
+    mistake in the CSS and explain how to fix it.
+  </p>
+
+  <div class="code-block">
+HTML
+&lt;p class="para"&gt;Hello&lt;/p&gt;
+
+CSS
+.para {
+    align: center;
+}
+  </div>
+
+  <textarea
+    id="q15"
+    placeholder="Explain why the text is not centered and provide the correct CSS property..."
+    required>
+  </textarea>
+</div>
+
+
+
+                <button type="submit" id="submit-btn" class="btn-submit">Submit Answers</button>
+            </form>
+
+            <div id="success-msg" class="card">
+                <h2>Submission Received!</h2>
+                <p>Stay seated until the round ends.</p>
+            </div>
+        </div>
+    </div>
+</main>
+
+<script>
+    // Security & Access
+    if (localStorage.getItem('isLoggedIn') !== 'true') window.location.href = 'login.html';
+    
+    const username = localStorage.getItem('currentUser') || "Participant";
+    document.getElementById('username-display').innerText = username;
+
+    function logout() {
+        if(confirm("Logout?")) { localStorage.clear(); window.location.href = 'login.html'; }
+    }
+
+    // Unlock logic
+    const isUnlocked = true; 
+    if (isUnlocked) {
+        document.getElementById('lock-overlay').style.display = 'none';
+        document.getElementById('competition-view').style.display = 'block';
+    }
+
+    // Consolidated Submit Logic
+    const debugForm = document.getElementById('debug-form');
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycby7D_shsAYIKCOCoTMlDJaugrBTlBZFvYPhccW0gt6xOQKFskwlF5zizMexo6BOIYa5/exec";
+
+    debugForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const btn = document.getElementById('submit-btn');
+        btn.disabled = true;
+        btn.innerText = "Submitting...";
+
+        // Collect all 15 answers
+        const payload = {
+            college: "Ramco Institute of Technology",
+            event: "TECHQUEST",
+            team: username,
+            timestamp: new Date().toLocaleString()
+        };
+
+        // Add each question to the payload dynamically
+        for (let i = 1; i <= 15; i++) {
+            payload[`q${i}`] = document.getElementById(`q${i}`).value;
+        }
+
+        try {
+            await fetch(SCRIPT_URL, {
+                method: "POST",
+                mode: "no-cors",
+                body: JSON.stringify(payload)
+            });
+            debugForm.style.display = "none";
+            document.getElementById("success-msg").style.display = "block";
+        } catch (err) {
+            alert("Submission failed. Check internet.");
+            btn.disabled = false;
+            btn.innerText = "Submit Answers";
+        }
+    });
+
+    // Copy-Paste Block
+    document.querySelectorAll('textarea').forEach(el => {
+        el.onpaste = (e) => { alert("No pasting!"); e.preventDefault(); };
+    });
+</script>
+</body>
+</html>
